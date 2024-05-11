@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <set>
-#include <iterator>
 #include <random>
 #include <cctype>
 #include "CRandomName.h"
@@ -10,9 +9,7 @@
 using namespace std;
 
 CRandomName::CRandomName()
-{
-
-}
+= default;
 
 CRandomName::~CRandomName()
 {
@@ -29,10 +26,9 @@ void CRandomName::processFile()
 {
 
     std::string word;
-    std::set<char> startCharsSet;     // these sets are used to list the different starting and available chars.
-    std::set<char> availableCharsSet; // they will be converted to vectors later.
-                                      // I needed sets for their key ability, and vectors later because they
-                                      // offer better access to the elements contained in the vector.
+    std::set<char> startCharsSet;
+    std::set<char> availableCharsSet;
+
     char base;
     char sequence;
     int wordPosition;
@@ -101,13 +97,12 @@ void CRandomName::outputList(std::ofstream &streamHandle)
     }
 }
 
-// Known bugs, if there are not enough names in the seed the program will crash.
 std::string CRandomName::outputName(double minLength, double maxLength)
 {
     RandomDoubleGenerator rdg(0.0, 1.0);
     std::string name;
     std::vector<char> freqVector;
-    double range = static_cast<double>((maxLength - minLength) + 1);
+    double range = (maxLength - minLength) + 1;
     int rangeLength = static_cast<int>(minLength + (range * (rdg.getRandomDouble())));
     char a = startChars.at(static_cast<int>(startChars.size() * rdg.getRandomDouble()));
     name += a;
@@ -171,16 +166,14 @@ std::string CRandomName::outputName(double minLength, double maxLength)
         }
     }
 
-    if (consonants == 0) { // Avoid division by zero
-        return outputName(minLength, maxLength);
-    } else {
+    if (consonants > 0) {
         double proportion = static_cast<double>(vowels) / consonants;
-        if (proportion <= DesiredConsonantVowelProportion) {
-            return outputName(minLength, maxLength);
+        if (proportion >= DesiredConsonantVowelProportion) {
+            return name;
         }
     }
 
-    return name;
+    return outputName(minLength, maxLength);
 }
 
 bool CRandomName::isVowel(char ch) {

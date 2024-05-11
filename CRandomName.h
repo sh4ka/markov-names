@@ -20,8 +20,8 @@ class CRandomName
     private:
 
         std::string errorMessage;
-        std::ifstream *fileStreamIn;
-        std::ofstream *fileStreamOut;
+        std::ifstream *fileStreamIn{};
+        std::ofstream *fileStreamOut{};
         std::map<char, std::map<char, CWordFrequency> > baseMap;
         std::map<char, CWordFrequency> sequenceFrequencyMap;
         std::vector<char> startChars;
