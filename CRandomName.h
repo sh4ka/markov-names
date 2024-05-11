@@ -5,8 +5,11 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <cctype>
+
 
 #include "CWordFrequency.h"
+#include "RandomNumberGenerator.h"
 
 #ifndef CRANDOMNAME_H_
 #define CRANDOMNAME_H_
@@ -25,14 +28,20 @@ class CRandomName
         std::vector<char> availableChars;
         CWordFrequency tempFrequency;
 
+        std::vector<char> consonants {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','z'};
+        std::vector<char> vowels {'a','e','i','o','u'};
+
+        const float DesiredConsonantVowelProportion {0.45};
+
     public:
 
         CRandomName();
         ~CRandomName();
         void inputFile(std::ifstream &streamHandle);
-        void processFile(bool NoWhiteSpaceSkip);
+        void processFile();
         void outputList(std::ofstream &streamHandle);
         std::string outputName(double minLength, double maxLength);
+        static bool isVowel(char ch);
 
 };
 

@@ -10,4 +10,6 @@ add_executable(markov_names
         CRandomName.h
         CWordFrequency.cpp
         CWordFrequency.h
-        main.cpp)
+        main.cpp
+        RandomNumberGenerator.cpp
+        RandomNumberGenerator.h)

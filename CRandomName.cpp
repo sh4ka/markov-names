@@ -3,12 +3,15 @@
 #include <set>
 #include <iterator>
 #include <random>
+#include <cctype>
 #include "CRandomName.h"
+#include "RandomNumberGenerator.h"
+
 using namespace std;
 
 CRandomName::CRandomName()
 {
-    srand(time(NULL));
+
 }
 
 CRandomName::~CRandomName()
@@ -22,10 +25,7 @@ void CRandomName::inputFile(std::ifstream &streamHandle)
     fileStreamIn = &streamHandle;
 }
 
-// Set the boolean to true if you have a file that contains names with whitespaces. This does mean that the
-// end of each name should be marked by a end of line character.
-// Also the words will be converted to uppercase automatically
-void CRandomName::processFile(bool NoWhiteSpaceSkip)
+void CRandomName::processFile()
 {
 
     std::string word;
@@ -42,15 +42,7 @@ void CRandomName::processFile(bool NoWhiteSpaceSkip)
 
     while (fileStreamIn->good())
     {
-        // Ignore whitespaces between words. Different names should be seperated by a '\n'
-        if (NoWhiteSpaceSkip)
-        {
-            getline(*fileStreamIn, word);
-        }
-        else
-        {
-            *fileStreamIn >> word;
-        }
+        *fileStreamIn >> word;
 
         if (word.length() > 1)
         {
@@ -112,11 +104,12 @@ void CRandomName::outputList(std::ofstream &streamHandle)
 // Known bugs, if there are not enough names in the seed the program will crash.
 std::string CRandomName::outputName(double minLength, double maxLength)
 {
+    RandomDoubleGenerator rdg(0.0, 1.0);
     std::string name;
     std::vector<char> freqVector;
     double range = static_cast<double>((maxLength - minLength) + 1);
-    int rangeLength = static_cast<int>(minLength + (range * ((double)rand() / (double)(RAND_MAX + 1))));
-    char a = startChars.at(static_cast<int>(startChars.size() * rand() / (RAND_MAX + 1.0)));
+    int rangeLength = static_cast<int>(minLength + (range * (rdg.getRandomDouble())));
+    char a = startChars.at(static_cast<int>(startChars.size() * rdg.getRandomDouble()));
     name += a;
 
     for (int counter = 1; counter < rangeLength; counter++)
@@ -157,14 +150,40 @@ std::string CRandomName::outputName(double minLength, double maxLength)
             }
         }
         std::random_device rd;
-    std:
-        mt19937 g(rd());
+        std::mt19937 g(rd());
         std::shuffle(freqVector.begin(), freqVector.end(), g);
         std::shuffle(freqVector.begin(), freqVector.end(), g);
         std::shuffle(freqVector.begin(), freqVector.end(), g);
-        int c = (int)(((cdc)*rand() / (RAND_MAX + 1.0)));
-        name += freqVector.at(c);
-        a = freqVector.at(c);
+        int generated = rdg.getRandomDouble() * cdc;
+        name += freqVector.at(generated);
+        a = freqVector.at(generated);
     }
+
+    int vowels = 0, consonants = 0;
+
+    for (char ch : name) {
+        if (std::isalpha(ch)) { // Check if the character is a letter
+            if (isVowel(ch)) {
+                vowels++;
+            } else {
+                consonants++;
+            }
+        }
+    }
+
+    if (consonants == 0) { // Avoid division by zero
+        return outputName(minLength, maxLength);
+    } else {
+        double proportion = static_cast<double>(vowels) / consonants;
+        if (proportion <= DesiredConsonantVowelProportion) {
+            return outputName(minLength, maxLength);
+        }
+    }
+
     return name;
+}
+
+bool CRandomName::isVowel(char ch) {
+    // Convert character to lowercase to handle both cases
+    return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
 }
