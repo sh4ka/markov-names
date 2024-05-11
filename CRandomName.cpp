@@ -154,7 +154,7 @@ std::string CRandomName::outputName(double minLength, double maxLength)
         a = freqVector.at(generated);
     }
 
-    int vowels = 0, consonants = 0;
+    /*int vowels = 0, consonants = 0;
 
     for (char ch : name) {
         if (std::isalpha(ch)) { // Check if the character is a letter
@@ -171,9 +171,9 @@ std::string CRandomName::outputName(double minLength, double maxLength)
         if (proportion >= DesiredConsonantVowelProportion) {
             return name;
         }
-    }
+    }*/
 
-    return outputName(minLength, maxLength);
+    return name;
 }
 
 bool CRandomName::isVowel(char ch) {

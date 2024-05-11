@@ -16,8 +16,7 @@ int main()
     name.inputFile(inFile);
     name.processFile();
 
-    std::string generatedName = name.outputName(4, 8);
-    generatedName[0] = std::toupper(generatedName[0]);
+    inFile.close();
 
-    std::cout << generatedName << '\n';
+    std::cout << name.outputName(4, 8) << '\n';
 }
